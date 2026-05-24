@@ -14,9 +14,10 @@ export default function DashboardPage() {
 
   const greeting = () => {
     const h = new Date().getHours();
-    if (h < 12) return 'Доброе утро';
-    if (h < 18) return 'Добрый день';
-    return 'Добрый вечер';
+    if (h >= 5 && h < 12) return 'Доброе утро';
+    if (h >= 12 && h < 17) return 'Добрый день';
+    if (h >= 17 && h < 23) return 'Добрый вечер';
+    return 'Доброй ночи';
   };
 
   return (

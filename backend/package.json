@@ -6,10 +6,24 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "test": "cross-env NODE_ENV=test jest --runInBand --forceExit",
+    "load:seed": "node load-tests/seed.js",
+    "load:test": "artillery run --output load-tests/last-report.json load-tests/artillery.yml",
+    "load:test:auth": "artillery run --output load-tests/auth-report.json load-tests/artillery-auth.yml",
+    "load:test:sync": "artillery run --output load-tests/sync-report.json load-tests/artillery-sync.yml",
+    "load:test:peak": "artillery run --overrides '{\"config\":{\"phases\":[{\"duration\":60,\"arrivalRate\":100,\"name\":\"peak\"}]}}' load-tests/artillery.yml",
+    "load:report": "node load-tests/report.js load-tests/last-report.json load-tests/auth-report.json load-tests/sync-report.json",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo:all",
     "seed": "npx sequelize-cli db:seed:all",
     "seed:undo": "npx sequelize-cli db:seed:undo:all"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "globalSetup": "./tests/helpers/globalSetup.js",
+    "globalTeardown": "./tests/helpers/globalTeardown.js",
+    "testMatch": ["**/tests/**/*.test.js"],
+    "testPathIgnorePatterns": ["/node_modules/", "/tests/helpers/"]
   },
   "dependencies": {
     "axios": "^1.7.2",
@@ -30,6 +44,10 @@
     "winston": "^3.13.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "artillery": "^2.0.21",
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
   }
 }

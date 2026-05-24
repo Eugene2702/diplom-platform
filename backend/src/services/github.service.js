@@ -90,14 +90,15 @@ class GitHubService {
       raw: true,
     });
 
-    // Aggregate by date
+    // Aggregate by date — raw:true above returns camelCase keys mapped via
+    // Sequelize field aliases, so we read committedAt (not committed_at).
     const byDate = {};
     const byWeek = {};
     commits.forEach((c) => {
-      const date = new Date(c.committed_at).toISOString().split('T')[0];
+      const date = new Date(c.committedAt).toISOString().split('T')[0];
       byDate[date] = (byDate[date] || 0) + 1;
 
-      const d = new Date(c.committed_at);
+      const d = new Date(c.committedAt);
       const weekStart = new Date(d);
       weekStart.setDate(d.getDate() - d.getDay());
       const weekKey = weekStart.toISOString().split('T')[0];

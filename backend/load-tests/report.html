@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>DiplomaHub — Load test report</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f1115;
+    color: #e7e9ee;
+    margin: 0;
+    padding: 32px 48px 64px;
+  }
+  h1 { font-weight: 700; letter-spacing: -0.5px; margin: 0 0 8px; }
+  h1 + p { color: #8a92a6; margin: 0 0 32px; }
+  section { background: #181b22; border-radius: 12px; padding: 24px 28px; margin-bottom: 24px; }
+  h2 { margin: 0 0 16px; font-size: 16px; color: #c0c6d5; font-family: ui-monospace, monospace; font-weight: 500; }
+  .summary { display: flex; gap: 24px; margin-bottom: 16px; }
+  .summary div { background: #20242d; padding: 12px 16px; border-radius: 8px; min-width: 120px; }
+  .summary span { display: block; font-size: 11px; color: #7d8499; text-transform: uppercase; letter-spacing: 1px; }
+  .summary b { font-size: 20px; font-weight: 600; }
+  .summary b.good { color: #4ade80; }
+  .summary b.bad { color: #f87171; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 10px 12px; text-align: right; border-bottom: 1px solid #23272f; }
+  th { color: #7d8499; font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  td.ep { text-align: left; font-family: ui-monospace, monospace; color: #c0c6d5; }
+  tbody tr:hover { background: #1d2027; }
+  strong { color: #fafafa; }
+</style>
+</head>
+<body>
+  <h1>DiplomaHub — Load test report</h1>
+  <p>Artillery 2.x · Сгенерировано 24.05.2026, 19:16:04</p>
+  
+    <section>
+      <h2>last-report.json</h2>
+      <div class="summary">
+        <div><span>Всего запросов</span><b>1900</b></div>
+        <div><span>HTTP 200</span><b>1900</b></div>
+        <div><span>Ошибок</span><b class="good">0</b></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Эндпоинт</th>
+            <th>min, мс</th>
+            <th>avg, мс</th>
+            <th>p50, мс</th>
+            <th>p95, мс</th>
+            <th>p99, мс</th>
+            <th>max, мс</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="ep">/api/projects/{{ projectId }}</td>
+          <td>13</td>
+          <td><strong>18.1</strong></td>
+          <td>16</td>
+          <td>23.8</td>
+          <td>34.1</td>
+          <td>170</td>
+        </tr>
+        <tr>
+          <td class="ep">/api/projects</td>
+          <td>-394</td>
+          <td><strong>13.1</strong></td>
+          <td>12.1</td>
+          <td>19.1</td>
+          <td>30.3</td>
+          <td>104</td>
+        </tr>
+        <tr>
+          <td class="ep">/api/projects/{{ projectId }}/git/stats</td>
+          <td>-822</td>
+          <td><strong>12.6</strong></td>
+          <td>13.1</td>
+          <td>19.9</td>
+          <td>36.2</td>
+          <td>55</td>
+        </tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>auth-report.json</h2>
+      <div class="summary">
+        <div><span>Всего запросов</span><b>30</b></div>
+        <div><span>HTTP 200</span><b>30</b></div>
+        <div><span>Ошибок</span><b class="good">0</b></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Эндпоинт</th>
+            <th>min, мс</th>
+            <th>avg, мс</th>
+            <th>p50, мс</th>
+            <th>p95, мс</th>
+            <th>p99, мс</th>
+            <th>max, мс</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="ep">/api/auth/login</td>
+          <td>302</td>
+          <td><strong>645</strong></td>
+          <td>646</td>
+          <td>714</td>
+          <td>714</td>
+          <td>719</td>
+        </tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>sync-report.json</h2>
+      <div class="summary">
+        <div><span>Всего запросов</span><b>30</b></div>
+        <div><span>HTTP 200</span><b>0</b></div>
+        <div><span>Ошибок</span><b class="good">0</b></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Эндпоинт</th>
+            <th>min, мс</th>
+            <th>avg, мс</th>
+            <th>p50, мс</th>
+            <th>p95, мс</th>
+            <th>p99, мс</th>
+            <th>max, мс</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="ep">/api/projects/{{ projectId }}/git/sync</td>
+          <td>78</td>
+          <td><strong>116</strong></td>
+          <td>94.6</td>
+          <td>130</td>
+          <td>252</td>
+          <td>605</td>
+        </tr></tbody>
+      </table>
+    </section>
+</body>
+</html>

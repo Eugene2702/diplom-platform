@@ -10,6 +10,15 @@ module.exports = {
     dialect: 'postgres',
     logging: false,
   },
+  test: {
+    username: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    database: process.env.TEST_DB_NAME || 'diploma_platform_test',
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
+    logging: false,
+  },
   production: {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,

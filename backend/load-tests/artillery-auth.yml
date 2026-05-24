@@ -1,0 +1,31 @@
+# DiplomaHub — отдельный сценарий POST /api/auth/login.
+#
+# bcrypt 12 раундов (~250-400 мс CPU) блокирует event loop Node.js,
+# поэтому при смешивании с read-эндпоинтами портит их p95/p99.
+# Этот изолированный прогон измеряет чистую латентность login.
+#
+# 1 RPS × 30 секунд = 30 запросов.
+# bcrypt 12 раундов занимает ~350 мс CPU на одно ядро. При >1 RPS
+# запросы начинают накладываться и время растёт лавинообразно.
+config:
+  target: 'http://localhost:5000'
+  processor: './processor.js'
+  http:
+    timeout: 30
+  phases:
+    - duration: 30
+      arrivalRate: 1
+      name: auth-only
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'POST /api/auth/login (bcrypt 12 rounds)'
+    beforeRequest: 'injectVars'
+    flow:
+      - post:
+          url: '/api/auth/login'
+          json:
+            email: '{{ email }}'
+            password: '{{ password }}'

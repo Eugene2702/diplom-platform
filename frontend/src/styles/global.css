@@ -1032,15 +1032,23 @@ tbody tr:hover {
 
 /* Notifications dropdown */
 .notif-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
+  position: fixed;
+  bottom: 24px;
+  left: 272px;
   width: 360px;
-  max-height: 400px;
+  max-height: min(440px, calc(100vh - 48px));
   overflow-y: auto;
-  margin-top: 8px;
-  z-index: 100;
+  z-index: 1000;
   padding: 8px;
+}
+
+@media (max-width: 768px) {
+  .notif-dropdown {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
 }
 
 .notif-item {

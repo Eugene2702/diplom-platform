@@ -159,7 +159,7 @@ export default function ProjectDetailPage() {
             </div>
           ) : (
             <div className="timeline">
-              {stages.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0)).map((stage) => {
+              {[...stages].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0)).map((stage) => {
                 const overdue = stage.status !== 'completed' && isOverdue(stage.deadline);
                 const effectiveStatus = overdue ? 'overdue' : stage.status;
                 return (

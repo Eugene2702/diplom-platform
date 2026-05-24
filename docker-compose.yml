@@ -34,6 +34,7 @@ services:
       JWT_SECRET: diploma_hub_secret_key_change_me
       JWT_EXPIRES_IN: 7d
       FRONTEND_URL: http://localhost:3000
+      GITHUB_DEFAULT_TOKEN: ${GITHUB_DEFAULT_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy

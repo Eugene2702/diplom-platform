@@ -1,0 +1,66 @@
+# DiplomaHub — нагрузочное тестирование (таблица 4.2 главы 4 ВКР).
+#
+# Phases (целевой замер — 50 одновременных пользователей по ВКР):
+#   warm-up: 20s @ 5 RPS    — прогрев пулов и кэшей Sequelize
+#   ramp   : 20s @ 5→25 RPS — постепенный выход
+#   steady : 60s @ 25 RPS   — измерительный отрезок
+#
+# По заявленному в ВКР SLA: avg ≤ 200мс, p95 < 500мс для read-эндпоинтов.
+# git/sync исключён из сценариев — он зависит от внешнего GitHub API
+# (см. отдельный сценарий в artillery-with-sync.yml).
+#
+# Запуск:
+#   npm run load:seed   # подготовить данные
+#   npm run load:test   # прогон (~100 секунд)
+#   npm run load:test:peak   # пиковая фаза 50 RPS
+config:
+  target: 'http://localhost:5000'
+  processor: './processor.js'
+  http:
+    timeout: 30
+  phases:
+    - duration: 20
+      arrivalRate: 5
+      name: warm-up
+    - duration: 20
+      arrivalRate: 5
+      rampTo: 25
+      name: ramp
+    - duration: 60
+      arrivalRate: 25
+      name: steady
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'GET /api/projects (list)'
+    weight: 45
+    beforeRequest: 'injectVars'
+    flow:
+      - get:
+          url: '/api/projects'
+          headers:
+            Authorization: 'Bearer {{ token }}'
+
+  - name: 'GET /api/projects/:id (detail)'
+    weight: 30
+    beforeRequest: 'injectVars'
+    flow:
+      - get:
+          url: '/api/projects/{{ projectId }}'
+          headers:
+            Authorization: 'Bearer {{ token }}'
+
+  - name: 'GET /api/projects/:id/git/stats'
+    weight: 25
+    beforeRequest: 'injectVars'
+    flow:
+      - get:
+          url: '/api/projects/{{ projectId }}/git/stats'
+          headers:
+            Authorization: 'Bearer {{ token }}'
+
+# login и git/sync вынесены в отдельные конфиги:
+#   artillery-auth.yml — bcrypt 12 раундов блокирует event loop
+#   artillery-sync.yml — внешний round-trip к GitHub

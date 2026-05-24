@@ -1,0 +1,32 @@
+# DiplomaHub — отдельный сценарий POST /git/sync.
+#
+# Изолированный прогон: 1 RPS на 30 секунд = 30 запросов.
+# Цель — измерить латентность одиночного git/sync без перекоса основной
+# таблицы (этот эндпоинт делает HTTP-call к api.github.com, его время
+# доминирует над всем остальным и забил бы хвосты read-эндпоинтов).
+#
+# Rate-limit GitHub: без токена 60 req/hour, 30 запросов — в пределах.
+#
+# Run:
+#   npm run load:test:sync
+config:
+  target: 'http://localhost:5000'
+  processor: './processor.js'
+  http:
+    timeout: 30
+  phases:
+    - duration: 30
+      arrivalRate: 1
+      name: git-sync-only
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'POST /api/projects/:id/git/sync'
+    beforeRequest: 'injectVars'
+    flow:
+      - post:
+          url: '/api/projects/{{ projectId }}/git/sync'
+          headers:
+            Authorization: 'Bearer {{ token }}'

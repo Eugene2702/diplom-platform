@@ -1,9 +1,20 @@
+// Точка входа DiplomaHub backend.
+//
+// Переменные окружения:
+//   OVERDUE_CRON — cron-выражение для фоновой проверки просроченных этапов.
+//                  По умолчанию "0 * * * *" (каждый час в начале часа).
+//                  Задача вызывает markOverdueStages() из services/overdue.service.js
+//                  и переводит этапы со статусом != completed/overdue и просроченным
+//                  дедлайном в статус "overdue". При NODE_ENV=test cron не стартует.
 require('dotenv').config();
 
+const cron = require('node-cron');
 const app = require('./app');
 const { sequelize, User } = require('./models');
+const { markOverdueStages } = require('./services/overdue.service');
 
 const PORT = process.env.PORT || 5000;
+const OVERDUE_CRON = process.env.OVERDUE_CRON || '0 * * * *';
 
 async function seedAdmin() {
   const admin = await User.findOne({ where: { email: 'admin@diploma.local' } });
@@ -45,6 +56,29 @@ async function seedAdmin() {
   }
 }
 
+function scheduleOverdueCron() {
+  if (process.env.NODE_ENV === 'test') return;
+
+  cron.schedule(OVERDUE_CRON, async () => {
+    const startedAt = new Date();
+    const t0 = Date.now();
+    try {
+      const updated = await markOverdueStages();
+      const elapsed = Date.now() - t0;
+      console.log(
+        `[overdue-cron] ${startedAt.toISOString()} updated=${updated} elapsedMs=${elapsed}`
+      );
+    } catch (err) {
+      console.error(
+        `[overdue-cron] ${startedAt.toISOString()} failed:`,
+        err && err.message ? err.message : err
+      );
+    }
+  });
+
+  console.log(`✓ Overdue cron scheduled: ${OVERDUE_CRON}`);
+}
+
 async function start() {
   try {
     await sequelize.authenticate();
@@ -57,6 +91,7 @@ async function start() {
 
     app.listen(PORT, () => {
       console.log(`✓ Server running on http://localhost:${PORT}`);
+      scheduleOverdueCron();
     });
   } catch (error) {
     console.error('✗ Failed to start:', error);

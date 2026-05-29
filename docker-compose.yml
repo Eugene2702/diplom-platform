@@ -35,6 +35,7 @@ services:
       JWT_EXPIRES_IN: 7d
       FRONTEND_URL: http://localhost:3000
       GITHUB_DEFAULT_TOKEN: ${GITHUB_DEFAULT_TOKEN:-}
+      OVERDUE_CRON: ${OVERDUE_CRON:-0 * * * *}
     depends_on:
       postgres:
         condition: service_healthy

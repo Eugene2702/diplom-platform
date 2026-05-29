@@ -1,5 +1,5 @@
 const { Stage, Project, Notification } = require('../models');
-const { Op } = require('sequelize');
+const { markOverdueStages } = require('../services/overdue.service');
 
 exports.getByProject = async (req, res) => {
   try {
@@ -73,15 +73,7 @@ exports.delete = async (req, res) => {
 
 exports.checkOverdue = async (req, res) => {
   try {
-    const [count] = await Stage.update(
-      { status: 'overdue' },
-      {
-        where: {
-          status: { [Op.notIn]: ['completed', 'overdue'] },
-          deadline: { [Op.lt]: new Date() },
-        },
-      }
-    );
+    const count = await markOverdueStages();
     res.json({ updated: count });
   } catch (error) {
     res.status(500).json({ error: error.message });
